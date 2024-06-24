@@ -42,7 +42,7 @@ class _HomeState extends State<Home> {
                       Text(
                         'All Menu',
                         style: TextStyle(
-                          fontSize: 24, // Increased font size
+                          fontSize: 24, // membesarkan font
                           color: font,
                           fontFamily: 'ro',
                         ),
