@@ -18,6 +18,16 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   final _videoUrlController = TextEditingController();
   final _estimatedTimeController = TextEditingController();
   File? _image;
+  String? _selectedCategory;
+
+  final List<String> _categories = [
+    'Betawi',
+    'Sunda',
+    'Padang',
+    'Bali',
+    'Chinese',
+    'Manado'
+  ];
 
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
@@ -33,6 +43,13 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
+      if (_selectedCategory == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please select a food category')),
+        );
+        return;
+      }
+
       String imageUrl = '';
       if (_image != null) {
         Reference storageReference = FirebaseStorage.instance
@@ -51,6 +68,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
         'thumbnailUrl': imageUrl,
         'favoriteState': false,
         'estimatedTime': int.parse(_estimatedTimeController.text),
+        'category': _selectedCategory,
       });
 
       Navigator.of(context).pop();
@@ -113,6 +131,8 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                     }
                     return null;
                   },
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
                 ),
                 TextFormField(
                   controller: _instructionsController,
@@ -123,7 +143,8 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                     }
                     return null;
                   },
-                  maxLines: 5,
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
                 ),
                 TextFormField(
                   controller: _videoUrlController,
@@ -145,6 +166,27 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                     }
                     if (int.tryParse(value) == null) {
                       return 'Please enter a valid number';
+                    }
+                    return null;
+                  },
+                ),
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(labelText: 'Food Category'),
+                  value: _selectedCategory,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedCategory = newValue;
+                    });
+                  },
+                  items: _categories.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Please select a food category';
                     }
                     return null;
                   },

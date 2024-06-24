@@ -14,9 +14,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int indexx = 0;
-  List<String> category = ['All', 'Padang', 'Chinese', 'Betawi'];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,86 +34,18 @@ class _HomeState extends State<Home> {
           var recipes = snapshot.data!.docs;
           return CustomScrollView(
             slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                  child: Text(
-                    'Popular Category',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: font,
-                      fontFamily: 'ro',
-                    ),
-                  ),
-                ),
-              ),
               SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                 sliver: SliverToBoxAdapter(
-                  child: Column(
+                  child: Row(
                     children: [
-                      Container(
-                        height: 60,
-                        child: ListView.builder(
-                          itemCount: category.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: ((context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    indexx = index;
-                                  });
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(
-                                    top: 5,
-                                    bottom: 5,
-                                    left: index == 0 ? 4 : 0,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: indexx == index ? maincolor : Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: indexx == index ? maincolor : Colors.transparent,
-                                        offset: indexx == index ? Offset(1, 1) : Offset(0, 0),
-                                        blurRadius: indexx == index ? 7 : 0,
-                                      )
-                                    ],
-                                  ),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 17),
-                                      child: Text(
-                                        category[index],
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: indexx == index ? Colors.white : font,
-                                          fontFamily: 'ro',
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
+                      Text(
+                        'All Menu',
+                        style: TextStyle(
+                          fontSize: 24, // Increased font size
+                          color: font,
+                          fontFamily: 'ro',
                         ),
-                      ),
-                      SizedBox(height: 15),
-                      Row(
-                        children: [
-                          Text(
-                            'Popular',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: font,
-                              fontFamily: 'ro',
-                            ),
-                          ),
-                        ],
                       ),
                     ],
                   ),
@@ -131,6 +60,7 @@ class _HomeState extends State<Home> {
                       final recipeName = recipe['recipeName'];
                       final isFavorite = recipe['favoriteState'];
                       final thumbnailUrl = recipe['thumbnailUrl'] ?? 'https://via.placeholder.com/150'; // Fallback image
+                      final estimatedTime = recipe['estimatedTime'];
                       return GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(
@@ -203,26 +133,13 @@ class _HomeState extends State<Home> {
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
                                   Text(
-                                    '100 min',
+                                    '$estimatedTime min',
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.grey,
                                       fontFamily: 'ro',
                                     ),
                                   ),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.star, color: maincolor, size: 15),
-                                      Text(
-                                        '4.2',
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: Colors.grey,
-                                          fontFamily: 'ro',
-                                        ),
-                                      ),
-                                    ],
-                                  )
                                 ],
                               )
                             ],
