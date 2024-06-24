@@ -18,7 +18,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: background,
-      appBar: appbar(context), // Pass the context to the appbar function
+      appBar: CustomAppBar(), // Pass the context to the appbar function
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('recipes').snapshots(),
         builder: (context, snapshot) {

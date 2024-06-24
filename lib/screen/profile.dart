@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe/consent/colors.dart';
 import 'package:recipe/userAuth/login_page.dart';
 import 'package:recipe/userAuth/toast.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class Profil extends StatefulWidget {
   Profil({super.key});
@@ -26,6 +29,7 @@ class _ProfilState extends State<Profil> {
   ];
 
   String? username;
+  String? profilePictureUrl;
 
   @override
   void initState() {
@@ -41,11 +45,44 @@ class _ProfilState extends State<Profil> {
           .doc(user.uid)
           .get();
       if (userData.exists) {
+        Map<String, dynamic> data = userData.data() as Map<String, dynamic>;
+        print("Fetched user data: $data");
         setState(() {
-          username = userData['username'];
+          username = data['username'];
+          profilePictureUrl = data['profilePictureUrl'] ?? null; // Provide a default value if the field is missing
         });
+      } else {
+        print("User data does not exist");
       }
+    } else {
+      print("User is not logged in");
     }
+  }
+
+  Future<void> uploadProfilePicture(File imageFile) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      Reference storageReference = FirebaseStorage.instance
+          .ref()
+          .child('userdata/${user.uid}/profilePicture.jpg');
+      UploadTask uploadTask = storageReference.putFile(imageFile);
+      TaskSnapshot taskSnapshot = await uploadTask;
+      String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+
+      await FirebaseFirestore.instance
+          .collection('userdata')
+          .doc(user.uid)
+          .update({'profilePictureUrl': downloadUrl});
+    }
+  }
+
+  Future<File?> pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      return File(image.path);
+    }
+    return null;
   }
 
   void _showPersonalData() async {
@@ -240,10 +277,12 @@ class _ProfilState extends State<Profil> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
-                  onTap: () {
-                    // Function to change profile picture
-                    // This is a placeholder for the actual functionality
-                    print('Change profile picture');
+                  onTap: () async {
+                    File? imageFile = await pickImage();
+                    if (imageFile != null) {
+                      await uploadProfilePicture(imageFile);
+                      _fetchUserData();
+                    }
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -254,7 +293,7 @@ class _ProfilState extends State<Profil> {
                       padding: const EdgeInsets.all(4.0),
                       child: CircleAvatar(
                         radius: 50,
-                        backgroundImage: AssetImage('images/profileFoto.jpg'),
+                        backgroundImage: profilePictureUrl != null ? NetworkImage(profilePictureUrl!) : AssetImage('images/profileFoto.jpg') as ImageProvider,
                       ),
                     ),
                   ),

@@ -12,7 +12,7 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appbar(context),
+      appBar: CustomAppBar(),
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
