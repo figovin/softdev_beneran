@@ -7,7 +7,7 @@ class Category extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appbar(),
+      appBar: appbar(context),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(top: 10),

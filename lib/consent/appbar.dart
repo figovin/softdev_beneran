@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:recipe/consent/colors.dart';
 
-PreferredSizeWidget appbar() {
+import '../userAuth/recipeFormScreen.dart';
+
+PreferredSizeWidget appbar(BuildContext context) {
   return AppBar(
     automaticallyImplyLeading: false,
     elevation: 0,
-    title: Icon(
-      Icons.fastfood,
-      size: 27,
+    title: GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RecipeFormScreen()),
+        );
+      },
+      child: Icon(
+        Icons.fastfood,
+        size: 27,
+      ),
     ),
     actions: [
       Padding(

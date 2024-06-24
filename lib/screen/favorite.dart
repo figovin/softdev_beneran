@@ -14,7 +14,7 @@ class _FavoriteState extends State<Favorite> {
   Widget build(BuildContext context) {
     final favoritesManager = FavoritesManager();
     return Scaffold(
-      appBar: appbar(),
+      appBar: appbar(context),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
